@@ -1281,7 +1281,7 @@
       }
     },
     "image-with-text": {
-      "name": "Image with text123",
+      "name": "Image with text",
       "settings": {
         "image": {
           "label": "Image"
@@ -1439,7 +1439,7 @@
         }
       },
       "presets": {
-        "name": "Image with text123"
+        "name": "Image with text"
       }
     },
     "multirow": {
