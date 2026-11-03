@@ -25,7 +25,7 @@
           "type": "text",
           "settings": {
             "heading": "Resources",
-            "subtext": "<ul><li><a href=\"https://shopify.dev/docs/apps/tools/development-stores/generated-data\" target=\"_blank\" title=\"Generated test data developer docs\">Generated test data docs</a></li><li><a href=\"https://shopify.dev/docs/apps/tools/graphiql-admin-api\" target=\"_blank\" title=\"GraphiQL API explorer\">GraphiQL API explorer</a></li></ul>"
+            "subtext": "<ul><li><a href=\"https://shopify.dev/docs/apps/tools/development-stores/generated-data\" target=\"_blank\" title=\"Generated test123 data developer docs\">Generated test123 data docs</a></li><li><a href=\"https://shopify.dev/docs/apps/tools/graphiql-admin-api\" target=\"_blank\" title=\"GraphiQL API explorer\">GraphiQL API explorer</a></li></ul>"
           }
         }
       },
