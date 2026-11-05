@@ -1,0 +1,38 @@
+{%- comment -%}
+  Renders the upsell configuration as JSON for assets/upsell-popup.js.
+
+  Source of truth is Shopify Admin (no product IDs in JS):
+  - custom.upsell_products_male   (list of products) on each main product
+  - custom.upsell_products_female (list of products) on each main product
+
+  Main products are the ones in the same collection used by sections/product-list.liquid.
+  Shape:
+  {
+    "variantToProduct": { "<main variant id>": "<main product id>" },
+    "products": { "<main product id>": { "title": "...", "male": [offers], "female": [offers] } }
+  }
+{%- endcomment -%}
+{%- assign upsell_main_collection = collections['blood-test'] -%}
+<script type="application/json" id="upsell-config">
+  {
+    "variantToProduct": {
+      {%- assign upsell_sep = '' -%}
+      {%- for main_product in upsell_main_collection.products -%}
+        {%- for main_variant in main_product.variants -%}
+          {{- upsell_sep }}"{{ main_variant.id }}": "{{ main_product.id }}"
+          {%- assign upsell_sep = ',' -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    },
+    "products": {
+      {%- for main_product in upsell_main_collection.products -%}
+        {%- unless forloop.first -%},{%- endunless -%}
+        "{{ main_product.id }}": {
+          "title": {{ main_product.title | json }},
+          "male": [{% render 'upsell-offers', products: main_product.metafields.custom.upsell_products_male.value %}],
+          "female": [{% render 'upsell-offers', products: main_product.metafields.custom.upsell_products_female.value %}]
+        }
+      {%- endfor -%}
+    }
+  }
+</script>

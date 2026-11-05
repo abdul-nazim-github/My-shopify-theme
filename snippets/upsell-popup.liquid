@@ -1,0 +1,40 @@
+{%- comment -%}
+  Upsell popup markup. Content is filled by assets/upsell-popup.js.
+  Intentionally has no close button / Escape handling: the customer must either
+  add selected items or skip, so checkout never opens before that decision.
+{%- endcomment -%}
+{{ 'component-upsell-popup.css' | asset_url | stylesheet_tag }}
+
+<div class="upsell-popup" id="upsell-popup" hidden>
+  <div class="upsell-popup__backdrop"></div>
+  <div
+    class="upsell-popup__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="upsell-popup-title"
+    aria-describedby="upsell-popup-subtitle"
+    tabindex="-1"
+  >
+    <header class="upsell-popup__header">
+      <h2 class="upsell-popup__title" id="upsell-popup-title">Recommended for You</h2>
+      <p class="upsell-popup__subtitle" id="upsell-popup-subtitle">
+        Add any of these optional tests to your order, or continue with your selected panel.
+      </p>
+    </header>
+
+    <ul class="upsell-popup__list" data-upsell-list></ul>
+
+    <p class="upsell-popup__error" data-upsell-error role="alert" hidden></p>
+
+    <footer class="upsell-popup__footer">
+      <button type="button" class="upsell-popup__btn upsell-popup__btn--primary" data-upsell-add disabled>
+        Add Selected &amp; Continue
+      </button>
+      <button type="button" class="upsell-popup__btn upsell-popup__btn--secondary" data-upsell-skip>
+        Skip &amp; Continue to Checkout
+      </button>
+    </footer>
+  </div>
+</div>
+
+<script src="{{ 'upsell-popup.js' | asset_url }}" defer></script>

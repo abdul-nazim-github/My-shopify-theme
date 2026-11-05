@@ -28,7 +28,10 @@
       Continue
     </button>
 
-  </form> 
+  </form>
+
+{% render 'upsell-config' %}
+{% render 'upsell-popup' %}
 
 <style>
   .patient_page_title{
@@ -584,7 +587,24 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // ============================================
-      // 10. REDIRECT TO SHOPIFY CHECKOUT
+      // 10. SHOW UPSELL POPUP (product + gender specific)
+      // ============================================
+      // If offers exist, the popup takes over (add selected / skip) and
+      // redirects to checkout itself. Otherwise continue straight to checkout.
+
+      if (
+        window.UpsellPopup &&
+        window.UpsellPopup.start({
+          mainVariantId: variantId,
+          gender: attributes.gender,
+          attributes: attributes
+        })
+      ) {
+        return;
+      }
+
+      // ============================================
+      // 11. REDIRECT TO SHOPIFY CHECKOUT
       // ============================================
 
       console.log("Redirecting to Shopify checkout...");
@@ -599,7 +619,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
 
       // ============================================
-      // 11. ERROR HANDLING
+      // 12. ERROR HANDLING
       // ============================================
 
       console.error("Patient checkout error:", error);

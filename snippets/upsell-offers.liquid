@@ -1,0 +1,21 @@
+{%- comment -%}
+  Outputs a comma-separated list of JSON objects (no surrounding brackets) describing upsell products.
+
+  Accepts:
+  - products: list of product objects (from a "List of products" metafield `.value`)
+
+  Usage: [{% render 'upsell-offers', products: main.metafields.custom.upsell_products_male.value %}]
+{%- endcomment -%}
+{%- assign offer_separator = '' -%}
+{%- for upsell_product in products -%}
+  {%- assign upsell_variant = upsell_product.selected_or_first_available_variant -%}
+  {{- offer_separator -}}
+  {
+    "variantId": {{ upsell_variant.id }},
+    "title": {{ upsell_product.title | json }},
+    "price": {{ upsell_variant.price | money | json }},
+    "image": {% if upsell_product.featured_image %}{{ upsell_product.featured_image | image_url: width: 240 | json }}{% else %}null{% endif %},
+    "available": {{ upsell_variant.available | json }}
+  }
+  {%- assign offer_separator = ',' -%}
+{%- endfor -%}
