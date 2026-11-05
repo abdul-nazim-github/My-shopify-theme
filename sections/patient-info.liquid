@@ -1,0 +1,639 @@
+<h1 class="patient_page_title">Patient Info</h1>
+  <form id="patient-form">
+
+    <input type="text" id="first_name" placeholder="First Name">
+    <input type="text" id="last_name" placeholder="Last Name">
+
+    <input type="date" id="dob">
+    <select id="gender">
+      <option value="">Select</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+
+    
+    <input type="email" id="patient_email" placeholder="Email">
+    <input type="number" id="patient_phone" placeholder="Phone" required>
+
+    <input type="text" id="address_line_1" placeholder="Address Line 1">
+    <input type="text" id="address_line_2" placeholder="Address Line 2">
+
+    <input type="text" id="city" placeholder="City">
+    <select id="state">
+      <option value="">Select</option>                  
+    </select>
+    <input type="text" id="zip" placeholder="Zipcode">
+    
+    <button type="button" id="save-patient-data">
+      Continue
+    </button>
+
+  </form> 
+
+<style>
+  .patient_page_title{
+  text-align:center;
+  }
+  #patient-form {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  }
+
+  /* Text inputs */
+  #patient-form input[type="text"],
+  #patient-form input[type="date"],
+  #patient-form input[type="number"],
+  #patient-form select {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    box-sizing: border-box;
+
+    border: 1px solid #d5d5d5;
+    border-radius: 6px;
+
+    background: #fff;
+    color: #333;
+    font-size: 15px;
+
+    outline: none;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+  }
+
+  /* Placeholder */
+  #patient-form input::placeholder {
+    color: #999;
+  }
+
+  /* Focus */
+  #patient-form input:focus,
+  #patient-form select:focus {
+    border-color: #222;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Height / Weight wrapper */
+  #patient-form .input-with-unit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Make input take remaining space */
+  #patient-form .input-with-unit input {
+    flex: 1;
+  }
+
+  /* Unit text */
+  #patient-form .input-with-unit span {
+    min-width: 35px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #555;
+  }
+
+  /* Continue button */
+  #save-patient-data {
+    width: 100%;
+    height: 50px;
+    margin-top: 5px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: #111;
+    color: #fff;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: background 0.2s ease,
+                transform 0.1s ease;
+  }
+
+  /* Button hover */
+  #save-patient-data:hover {
+    background: #333;
+  }
+
+  /* Button click */
+  #save-patient-data:active {
+    transform: scale(0.98);
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    #patient-form {
+      margin: 20px 15px;
+      padding: 20px;
+      gap: 15px;
+    }
+
+    #patient-form input[type="text"],
+    #patient-form input[type="date"],
+    #patient-form input[type="number"],
+    #patient-form select {
+      height: 46px;
+      font-size: 14px;
+    }
+
+    #save-patient-data {
+      height: 48px;
+    }
+  }
+
+  #patient-form #patient_email,
+  #patient-form #patient_phone {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    box-sizing: border-box;
+
+    border: 1px solid #d5d5d5;
+    border-radius: 6px;
+
+    background: #fff;
+    color: #333;
+    font-size: 15px;
+
+    outline: none;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+  }
+
+  /* Placeholder */
+  #patient-form #patient_email::placeholder,
+  #patient-form #patient_phone::placeholder {
+    color: #999;
+  }
+
+  /* Focus */
+  #patient-form #patient_email:focus,
+  #patient-form #patient_phone:focus {
+    border-color: #222;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+  }
+
+
+/* Mobile */
+  @media (max-width: 600px) {
+    #patient-form #patient_email,
+    #patient-form #patient_phone {
+      height: 46px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const addressInput = document.getElementById('address_line_1');
+
+  if (!addressInput) return;
+
+  const mockAddresses = [
+    {
+      address: '1208 Somerville Rd SE',
+      city: 'Decatur',
+      state: 'Alabama',
+      zip: '35601'
+    }
+  ];
+
+  const suggestionBox = document.createElement('div');
+
+  suggestionBox.style.cssText = `
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    width: 100%;
+    z-index: 9999;
+  `;
+
+  addressInput.parentElement.style.position = 'relative';
+  addressInput.parentElement.appendChild(suggestionBox);
+
+  addressInput.addEventListener('input', function () {
+
+    const search = this.value.toLowerCase().trim();
+
+    suggestionBox.innerHTML = '';
+
+    if (!search) {
+      return;
+    }
+
+    const matches = mockAddresses.filter(function (item) {
+      return item.address.toLowerCase().includes(search);
+    });
+
+    matches.forEach(function (item) {
+
+      const option = document.createElement('div');
+
+      option.textContent =
+        item.address + ', ' +
+        item.city + ', ' +
+        item.state + ' ' +
+        item.zip;
+
+      option.style.cssText = `
+        padding: 10px;
+        cursor: pointer;
+        background: #fff;
+      `;
+
+      option.addEventListener('click', function () {
+
+        // Address Line 1
+        addressInput.value = item.address;
+
+        // City
+        document.getElementById('city').value = item.city;
+
+        // ZIP
+        document.getElementById('zip').value = item.zip;
+
+        // State
+        const stateSelect = document.getElementById('state');
+
+        if (stateSelect) {
+
+          // Clear existing options
+          stateSelect.innerHTML = '';
+
+          // Add selected state
+          const stateOption = document.createElement('option');
+
+          stateOption.value = item.state;
+          stateOption.textContent = item.state;
+          stateOption.selected = true;
+
+          stateSelect.appendChild(stateOption);
+        }
+
+        suggestionBox.innerHTML = '';
+      });
+
+      suggestionBox.appendChild(option);
+    });
+  });
+
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const continueButton = document.getElementById("save-patient-data");
+
+  if (!continueButton) {
+    console.error("Continue button not found.");
+    return;
+  }
+
+  continueButton.addEventListener("click", async function () {
+
+    console.log("Button clicked");
+
+    // ============================================
+    // 1. GET SELECTED PRODUCT VARIANT ID
+    // ============================================
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const variantId = urlParams.get("variant_id");
+
+    console.log("Selected variant ID:", variantId);
+
+    if (!variantId || !/^\d+$/.test(variantId)) {
+      alert("No valid product was selected.");
+      return;
+    }
+
+    // ============================================
+    // 2. GET FORM VALUES
+    // ============================================
+
+    const firstName = document.getElementById("first_name").value.trim();
+    const lastName = document.getElementById("last_name").value.trim();
+
+    const email = document.getElementById("patient_email").value.trim();
+
+    const phoneInput = document.getElementById("patient_phone");
+    const phone = phoneInput.value.trim();
+
+    const dob = document.getElementById("dob").value.trim();
+
+    const gender = document.getElementById("gender").value.trim();
+
+    const addressLine1 = document.getElementById("address_line_1").value.trim();
+    const addressLine2 = document.getElementById("address_line_2").value.trim();
+
+    const city = document.getElementById("city").value.trim();
+    const state = document.getElementById("state").value.trim();
+    const zipcode = document.getElementById("zip").value.trim();
+
+    // ============================================
+    // 3. VALIDATE ALL REQUIRED FIELDS
+    // ============================================
+
+    if (!firstName) {
+      alert("Please enter your first name.");
+      document.getElementById("first_name").focus();
+      return;
+    }
+
+    if (!lastName) {
+      alert("Please enter your last name.");
+      document.getElementById("last_name").focus();
+      return;
+    }
+
+    // Email validation
+    if (!email) {
+      alert("Please enter your email address.");
+      document.getElementById("patient_email").focus();
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      document.getElementById("patient_email").focus();
+      return;
+    }
+
+    // Phone validation
+    console.log("Phone element:", phoneInput);
+    console.log("Phone value:", phone);
+
+    if (!phone) {
+      alert("Please enter your phone number.");
+      phoneInput.focus();
+      return;
+    }
+
+    // Remove spaces, brackets, hyphens, etc.
+    const cleanPhone = phone.replace(/\D/g, "");
+
+    if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+      alert("Please enter a valid phone number.");
+      phoneInput.focus();
+      return;
+    }
+
+    // Date of birth validation
+    if (!dob) {
+      alert("Please enter your date of birth.");
+      document.getElementById("dob").focus();
+      return;
+    }
+
+    const dobDate = new Date(dob + "T00:00:00");
+
+    if (
+      Number.isNaN(dobDate.getTime()) ||
+      dobDate >= new Date(new Date().toDateString())
+    ) {
+      alert("Please enter a valid date of birth.");
+      document.getElementById("dob").focus();
+      return;
+    }
+
+    // Gender validation
+    if (!gender) {
+      alert("Please select your gender.");
+      document.getElementById("gender").focus();
+      return;
+    }
+
+    // Address validation
+    if (!addressLine1) {
+      alert("Please enter your address line 1.");
+      document.getElementById("address_line_1").focus();
+      return;
+    }
+
+    // Address line 2 is optional
+
+    if (!city) {
+      alert("Please enter your city.");
+      document.getElementById("city").focus();
+      return;
+    }
+
+    if (!state) {
+      alert("Please select your state.");
+      document.getElementById("state").focus();
+      return;
+    }
+
+    if (!zipcode) {
+      alert("Please enter your zipcode.");
+      document.getElementById("zip").focus();
+      return;
+    }
+
+    // ============================================
+    // 4. CREATE PATIENT ATTRIBUTES
+    // ============================================
+
+    const attributes = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone: phone,
+      dob: dob,
+      gender: gender.toLowerCase(),
+      address_line_1: addressLine1.toLowerCase(),
+      address_line_2: addressLine2.toLowerCase(),
+      city: city.toLowerCase(),
+      state: state.toLowerCase(),
+      zip_code: zipcode
+    };
+
+    console.log("PATIENT ATTRIBUTES:", attributes);
+
+    // ============================================
+    // 5. DISABLE BUTTON DURING PROCESSING
+    // ============================================
+
+    continueButton.disabled = true;
+    continueButton.textContent = "Processing...";
+
+    try {
+
+      // ============================================
+      // 6. CLEAR OLD CART
+      // ============================================
+
+      const clearResponse = await fetch(
+        window.Shopify.routes.root + "cart/clear.js",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      if (!clearResponse.ok) {
+        throw new Error(
+          "Cart clear failed: " + clearResponse.status
+        );
+      }
+
+      console.log("OLD CART CLEARED");
+
+      // ============================================
+      // 7. SAVE PATIENT ATTRIBUTES
+      // ============================================
+
+      const updateResponse = await fetch(
+        window.Shopify.routes.root + "cart/update.js",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            attributes: attributes
+          })
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error(
+          "Cart update failed: " + updateResponse.status
+        );
+      }
+
+      const cart = await updateResponse.json();
+
+      console.log("NEW CART:", cart);
+      console.log("NEW CART ATTRIBUTES:", cart.attributes);
+
+      // ============================================
+      // 8. ADD SELECTED PRODUCT TO CART
+      // ============================================
+
+      const addResponse = await fetch(
+        window.Shopify.routes.root + "cart/add.js",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            items: [
+              {
+                id: Number(variantId),
+                quantity: 1
+              }
+            ]
+          })
+        }
+      );
+
+      const addResult = await addResponse.json();
+
+      if (!addResponse.ok) {
+        throw new Error(
+          addResult.description || "Product could not be added to cart."
+        );
+      }
+
+      console.log("PRODUCT ADDED:", addResult);
+
+      // ============================================
+      // 9. VERIFY FINAL CART
+      // ============================================
+
+      const cartResponse = await fetch(
+        window.Shopify.routes.root + "cart.js"
+      );
+
+      if (!cartResponse.ok) {
+        throw new Error(
+          "Could not retrieve cart: " + cartResponse.status
+        );
+      }
+
+      const finalCart = await cartResponse.json();
+
+      console.log("FINAL CART:", finalCart);
+      console.log("FINAL CART ATTRIBUTES:", finalCart.attributes);
+
+      if (!finalCart.item_count) {
+        throw new Error("Your cart is empty.");
+      }
+
+      // ============================================
+      // 10. REDIRECT TO SHOPIFY CHECKOUT
+      // ============================================
+
+      console.log("Redirecting to Shopify checkout...");
+
+      const checkoutUrl =
+        window.Shopify.routes.root + "checkout";
+
+      console.log("Checkout URL:", checkoutUrl);
+
+      window.location.assign(checkoutUrl);
+
+    } catch (error) {
+
+      // ============================================
+      // 11. ERROR HANDLING
+      // ============================================
+
+      console.error("Patient checkout error:", error);
+
+      alert(
+        error.message ||
+        "Something went wrong. Please try again."
+      );
+
+      continueButton.disabled = false;
+      continueButton.textContent = "Continue";
+
+    }
+
+  });
+
+});
+</script>
+
+{% schema %}
+{
+  "name": "Customer Data",
+  "tag": "section",
+  "class": "section customer_data_container",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Data"
+    }
+  ]
+}
+{% endschema %}
